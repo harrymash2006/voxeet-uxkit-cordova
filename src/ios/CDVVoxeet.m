@@ -2,7 +2,7 @@
 #import <Cordova/CDV.h>
 #import <VoxeetSDK/VoxeetSDK.h>
 #import <VoxeetUXKit/VoxeetUXKit.h>
-#import "Dolby-Swift.h"
+//#import "Dolby-Swift.h"
 
 @interface CDVVoxeet() <VTConferenceDelegate>
 
@@ -24,8 +24,8 @@
 }
 
 - (void)permissionsUpdatedWithPermissions:(NSArray<NSNumber *> * _Nonnull)permissions{
-    SwiftMethods *methods = [[SwiftMethods alloc] init];
-    NSArray *updatedPermissions =  [methods getPermissionsWithPermissions:permissions];
+    //SwiftMethods *methods = [[SwiftMethods alloc] init];
+    //NSArray *updatedPermissions =  [methods getPermissionsWithPermissions:permissions];
 }
 - (void)participantAddedWithParticipant:(VTParticipant * _Nonnull)participant{
     
