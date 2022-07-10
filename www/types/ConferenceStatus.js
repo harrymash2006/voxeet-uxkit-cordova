@@ -37,7 +37,8 @@ function fromRawToConferenceStatus(raw) {
     return {
         status,
         conferenceAlias: raw.conferenceAlias,
-        conferenceId: raw.conferenceId
+        conferenceId: raw.conferenceId,
+        participants: raw.participants
     };
 }
 exports.fromRawToConferenceStatus = fromRawToConferenceStatus;

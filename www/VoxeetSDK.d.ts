@@ -36,6 +36,10 @@ declare class VoxeetSDK {
      * Closes the current session.
      */
     disconnect(): Promise<string>;
+
+    startScreenShare(broadcast: boolean): Promise<string>;
+
+    stopScreenShare(): Promise<string>;
     /**
      * Creates a conference.
      * @param options Options to use to create the conference

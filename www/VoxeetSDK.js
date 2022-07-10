@@ -5,7 +5,7 @@ const UserInfo_1 = require("./UserInfo");
 /**
  * This class enable interaction with VoxeetUXKit
  */
-const exec = require('cordova/exec');
+const exec = cordova.require('cordova/exec');
 const SERVICE = 'Voxeet';
 class VoxeetSDK {
     constructor() {
@@ -68,12 +68,26 @@ class VoxeetSDK {
             exec(resolve, reject, SERVICE, 'create', [options]);
         });
     }
+
+    startScreenShare(broadcast) {
+        alert('inside startScreenShare')
+        return new Promise((resolve, reject) => {
+            exec(resolve, reject, SERVICE, 'startScreenShare', [broadcast]);
+        });
+    }
+
+    stopScreenShare(){
+        return new Promise((resolve, reject) => {
+            exec(resolve, reject, SERVICE, 'stopScreenShare', []);
+        });
+    }
     /**
      * Joins the conference and opens the conference overlay.
      * @param conferenceId Id of the conference to join
      * @param options Options to use to join the conference
      */
     join(conferenceId, options = {}) {
+        console.log('join()::')
         return new Promise((resolve, reject) => {
             exec(resolve, reject, SERVICE, 'join', [conferenceId, options]);
         });
@@ -91,6 +105,7 @@ class VoxeetSDK {
      * Leaves the conference.
      */
     leave() {
+        console.log('leave()::')
         return new Promise((resolve, reject) => {
             exec(resolve, reject, SERVICE, 'leave', []);
         });
@@ -211,6 +226,7 @@ class VoxeetSDK {
      * Minimize the overlay.
      */
     minimize() {
+        console.log('minimize()::')
         return new Promise((resolve, reject) => {
             exec(resolve, reject, SERVICE, 'minimize', []);
         });
@@ -219,6 +235,7 @@ class VoxeetSDK {
      * Maximize the overlay.
      */
     maximize() {
+        console.log('maximize()::')
         return new Promise((resolve, reject) => {
             exec(resolve, reject, SERVICE, 'maximize', []);
         });
@@ -256,7 +273,7 @@ class VoxeetSDK {
      */
     onConferenceStatusUpdatedEvent(callback) {
         exec((object) => {
-            const event = (0, ConferenceStatus_1.fromRawToConferenceStatus)(object);
+            const event = ConferenceStatus_1.fromRawToConferenceStatus(object);
             if (null != event)
                 callback(event);
             else

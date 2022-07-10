@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 /** This class enable interaction with VoxeetUXKit */
-const exec = require('cordova/exec');
+const exec = cordova.require('cordova/exec');
 const SERVICE_MEDIA = 'VoxeetMedia';
 class VoxeetMedia {
     constructor() {
