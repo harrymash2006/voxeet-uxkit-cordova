@@ -39,6 +39,26 @@
         <clobbers target="UserInfo" />
     </js-module>
 
+    <js-module src="www/AudioTrack.js" name="AudioTrack">
+        <clobbers target="AudioTrack" />
+    </js-module>
+
+    <js-module src="www/MediaStream.js" name="MediaStream">
+        <clobbers target="MediaStream" />
+    </js-module>
+
+    <js-module src="www/Participant.js" name="Participant">
+        <clobbers target="Participant" />
+    </js-module>
+
+    <js-module src="www/ParticipantInfo.js" name="ParticipantInfo">
+        <clobbers target="ParticipantInfo" />
+    </js-module>
+
+    <js-module src="www/VideoTrack.js" name="VideoTrack">
+        <clobbers target="VideoTrack" />
+    </js-module>
+
     <js-module src="www/types/ConferenceStatus.js" name="types/ConferenceStatus">
         <clobbers target="types_ConferenceStatus" />
     </js-module>
