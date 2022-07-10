@@ -2,18 +2,53 @@
 #import <Cordova/CDV.h>
 #import <VoxeetSDK/VoxeetSDK.h>
 #import <VoxeetUXKit/VoxeetUXKit.h>
+#import "Dolby-Swift.h"
 
-@interface CDVVoxeet()
+@interface CDVVoxeet() <VTConferenceDelegate>
 
 @property (nonatomic, copy) NSString *consumerKey;
 @property (nonatomic, copy) NSString *consumerSecret;
 @property (nonatomic, copy) CDVInvokedUrlCommand *refreshAccessTokenCommand;
 @property (nonatomic, copy) void (^refreshAccessTokenClosure)(NSString *);
 @property (nonatomic, copy) CDVInvokedUrlCommand *conferenceStatusUpdatedCommand;
+@property (nonatomic, copy) CDVInvokedUrlCommand *streamUpdated;
+@property (nonatomic, copy) CDVInvokedUrlCommand *streamRemoved;
+@property (nonatomic, copy) CDVInvokedUrlCommand *streamAdded;
 
 @end
 
 @implementation CDVVoxeet
+
+- (void)statusUpdatedWithStatus:(enum VTConferenceStatus)status{
+    
+}
+
+- (void)permissionsUpdatedWithPermissions:(NSArray<NSNumber *> * _Nonnull)permissions{
+    SwiftMethods *methods = [[SwiftMethods alloc] init];
+    NSArray *updatedPermissions =  [methods getPermissionsWithPermissions:permissions];
+}
+- (void)participantAddedWithParticipant:(VTParticipant * _Nonnull)participant{
+    
+}
+- (void)participantUpdatedWithParticipant:(VTParticipant * _Nonnull)participant{
+    
+}
+- (void)streamAddedWithParticipant:(VTParticipant * _Nonnull)participant stream:(MediaStream * _Nonnull)stream{
+    /*if (_streamAdded != nil) {
+        NSDictionary *statusDict = @{@"status": statusStr,
+                                     @"conferenceId": conference.id,
+                                     @"conferenceAlias": conference.alias};
+        CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:statusDict];
+        [pluginResult setKeepCallbackAsBool:YES];
+        [self.commandDelegate sendPluginResult:pluginResult callbackId:_streamAdded.callbackId];
+    }*/
+}
+- (void)streamUpdatedWithParticipant:(VTParticipant * _Nonnull)participant stream:(MediaStream * _Nonnull)stream{
+    
+}
+- (void)streamRemovedWithParticipant:(VTParticipant * _Nonnull)participant stream:(MediaStream * _Nonnull)stream{
+    
+}
 
 - (void)pluginInitialize {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(finishLaunching:) name:UIApplicationDidFinishLaunchingNotification object:nil];
@@ -59,6 +94,9 @@
 - (void)initializeWithConsumerKey:(NSString *)consumerKey consumerSecret:(NSString *)consumerSecret {
     [VoxeetSDK.shared initializeWithConsumerKey:consumerKey consumerSecret:consumerSecret];
     [VoxeetUXKit.shared initialize];
+    VoxeetSDK.shared.appGroup = @"group.com.voxeettp";
+    VoxeetSDK.shared.preferredExtension = @"com.build.tryingtobuildyou.ScreenShare";
+    VoxeetSDK.shared.conference.delegate = self;
     
     VoxeetSDK.shared.notification.push.type = VTNotificationPushTypeCallKit;
     VoxeetSDK.shared.telemetry.platform = VTTelemetryPlatformCordova;
@@ -131,6 +169,7 @@
     VTConferenceOptions *conferenceOptions = [[VTConferenceOptions alloc] init];
     conferenceOptions.alias = [options valueForKey:@"alias"];
     conferenceOptions.pinCode = [options valueForKey:@"pinCode"];
+    
     NSDictionary *params = [options valueForKey:@"params"];
     if (params) {
         conferenceOptions.params.liveRecording = [params valueForKey:@"liveRecording"];
@@ -263,12 +302,36 @@
 }
 
 - (void)setUIConfiguration:(CDVInvokedUrlCommand *)command {
-//    NSString *jsonStr = [command.arguments objectAtIndex:0];
-//    NSError *jsonError;
-//    NSData *jsonData = [jsonStr dataUsingEncoding:NSUTF8StringEncoding];
-//    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:jsonData
-//                                                         options:NSJSONReadingMutableContainers
-//                                                           error:&jsonError];
+    NSDictionary *jsonStr = [command.arguments objectAtIndex:0];
+    NSError *jsonError;
+    NSDictionary *props = [jsonStr objectForKey:@"actionBar"];
+    BOOL isTelecomMode = [[jsonStr objectForKey:@"isTelecomMode"] boolValue];
+    BOOL displayMute =  [[props objectForKey:@"displayMute"] boolValue];
+    BOOL displaySpeaker =  [[props objectForKey:@"displaySpeaker"] boolValue];
+    BOOL displayLeave =  [[props objectForKey:@"displayLeave"] boolValue];
+    BOOL displayCamera =  [[props objectForKey:@"displayCamera"] boolValue];
+    BOOL displayScreenShare =  [[props objectForKey:@"displayScreenShare"] boolValue];
+    NSLog(@"displayMute::",@"");
+    VTUXConferenceController *conferenceController = VoxeetUXKit.shared.conferenceController;
+    if (conferenceController != nil) {
+        VTUXConferenceControllerConfiguration *config = [[VTUXConferenceControllerConfiguration alloc] init];
+        VTUXActionBarConfiguration *actionBarConfig = [[VTUXActionBarConfiguration alloc] init];
+        actionBarConfig.displayMute = displayMute;
+        actionBarConfig.displayLeave = displayLeave;
+        actionBarConfig.displayCamera = displayCamera;
+        actionBarConfig.displaySpeaker = displaySpeaker;
+        actionBarConfig.displayScreenShare = displayScreenShare;
+        config.actionBar = actionBarConfig;
+        conferenceController.configuration = config;
+        conferenceController.telecom = isTelecomMode;
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK] callbackId:command.callbackId];
+        
+    }
+    /*NSData *jsonData = [jsonStr dataUsingEncoding:NSUTF8StringEncoding];
+    NSDictionary *json = [NSJSONSerialization JSONObjectWithData:jsonData
+                                                         options:NSJSONReadingMutableContainers
+                                                           error:&jsonError];
+    NSLog(@"jsonstr::%@", jsonStr);*/
 }
 
 - (void)defaultBuiltInSpeaker:(CDVInvokedUrlCommand *)command {
@@ -405,13 +468,28 @@
     });
 }
 
+- (void)refreshAccessTokenCallback:(CDVInvokedUrlCommand *)command {
+    // No need to be resolved because it's gonna be resolved in `initializeToken`.
+    _refreshAccessTokenCommand = command;
+}
+
 /*
  *  MARK: Oauth2 helpers
  */
 
-- (void)refreshAccessTokenCallback:(CDVInvokedUrlCommand *)command {
+- (void)streamUpdatedCallback:(CDVInvokedUrlCommand *)command {
     // No need to be resolved because it's gonna be resolved in `initializeToken`.
-    _refreshAccessTokenCommand = command;
+    _streamUpdated = command;
+}
+
+- (void)streamAddedCallback:(CDVInvokedUrlCommand *)command {
+    // No need to be resolved because it's gonna be resolved in `initializeToken`.
+    _streamAdded = command;
+}
+
+- (void)streamRemovedCallback:(CDVInvokedUrlCommand *)command {
+    // No need to be resolved because it's gonna be resolved in `initializeToken`.
+    _streamRemoved = command;
 }
 
 - (void)onAccessTokenOk:(CDVInvokedUrlCommand *)command {
@@ -489,9 +567,11 @@
     
     VTConference *conference = VoxeetSDK.shared.conference.current;
     if (conference != nil && _conferenceStatusUpdatedCommand != nil) {
+        
         NSDictionary *statusDict = @{@"status": statusStr,
                                      @"conferenceId": conference.id,
-                                     @"conferenceAlias": conference.alias};
+                                     @"conferenceAlias": conference.alias,
+                                     @"participants": conference.participants};
         CDVPluginResult *pluginResult = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsDictionary:statusDict];
         [pluginResult setKeepCallbackAsBool:YES];
         [self.commandDelegate sendPluginResult:pluginResult callbackId:_conferenceStatusUpdatedCommand.callbackId];
