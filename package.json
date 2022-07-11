@@ -1,6 +1,6 @@
 {
   "name": "cordova-plugin-voxeet",
-  "version": "1.5.7",
+  "version": "1.5.8",
   "description": "Cordova Voxeet Plugin",
   "cordova": {
     "id": "cordova-plugin-voxeet",
@@ -14,7 +14,7 @@
     "url": "https://github.com/harrymash2006/voxeet-uxkit-cordova.git"
   },
   "bugs": {
-    "url": "https://github.com/voxeet/voxeet-uxkit-cordova/issues"
+    "url": "https://github.com/harrymash2006/voxeet-uxkit-cordova/issues"
   },
   "keywords": [
     "ecosystem:cordova",
