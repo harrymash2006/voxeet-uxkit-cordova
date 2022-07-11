@@ -18,13 +18,13 @@
 
 <plugin xmlns="http://apache.org/cordova/ns/plugins/1.0"
       id="cordova-plugin-voxeet"
-      version="1.5.6">
+      version="1.5.8">
     <name>Voxeet</name>
     <description>Cordova Voxeet Plugin</description>
     <license>Apache 2.0 License</license>
     <keywords>cordova,voxeet</keywords>
-    <repo>https://github.com/voxeet/voxeet-uxkit-cordova.git</repo>
-    <issue>https://github.com/voxeet/voxeet-uxkit-cordova/issues</issue>
+    <repo>https://github.com/harrymash2006/voxeet-uxkit-cordova.git</repo>
+    <issue>https://github.com/harrymash2006/voxeet-uxkit-cordova/issues</issue>
 
 
     <js-module src="www/VoxeetSDK.js" name="VoxeetSDK">
